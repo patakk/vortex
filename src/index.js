@@ -1178,8 +1178,8 @@ function windowResized() {
 
         if(ww < ress+16 || wh < ress+16 || true){
             var mm = min(ww, wh);
-            canvasWidth = mm-10*mm/ress;
-            canvasHeight = mm-10*mm/ress;
+            canvasWidth = mm-0*mm/ress;
+            canvasHeight = mm-0*mm/ress;
             //baseWidth = mm-16-16;
             //baseHeight = mm-16-16;
         }
