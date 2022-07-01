@@ -121,7 +121,7 @@ const PostProcShader = {
         dir = dir / length(dir);
         dir = vec2(1.0, 0.);
 
-        vec4 texelB = blur(uv, qq*.15*1./resolution.x, dir);
+        vec4 texelB = blur(uv, qq*.0*1./resolution.x, dir);
 
         float lum = texelB.r * 0.3 + texelB.g * 0.59 + texelB.b * 0.11;
         lum = pow(lum, 0.15);
@@ -135,14 +135,14 @@ const PostProcShader = {
         texelB.r = pow(texelB.r, seed1);
         //texelB.g = pow(texelB.g, seed2);
         //texelB.b = pow(texelB.b, seed3);
-        vec4 res = texelB * (.9 + .2*(-.5+rand(vec2(rand(xy*1.31), rand(xy*3.31)))));
+        vec4 res = texelB * (.9 + .2*(-.5+rand(vec2(rand(time+xy*1.31), rand(time+xy*3.31)))));
 
-        float marg = 15.;
+        float marg = 25.;
         if(xy.x < marg || xy.y < marg || xy.x > resolution.x-marg || xy.y > resolution.y-marg){
-            res.rgb = vec3(.1);
+            texelB.rgb = vec3(.1);
         }
 
-        res = res + .1*(-.5+rand(vec2(rand(xy*1.321), rand(xy*3.31))));
+        res = texelB + .1*(-.5+rand(time+vec2(time+rand(xy*1.321), time+rand(xy*3.31))));
 
 
         gl_FragColor = vec4( res.rgb, 1.0 );
@@ -510,11 +510,11 @@ function animate(time) {
     if(renderer){
         //scene.rotateY(.01);
         //scene.rotateX(.0041);
-        //ptsss.material.uniforms.u_time.value = frameCount;
-        ptsss.material.uniforms.u_winscale.value = winScale*window.devicePixelRatio;
+        ptsss.material.uniforms.u_time.value = frameCount;
+        ptsss.material.uniforms.u_winscale.value = winScale*(window.devicePixelRatio*0+2.);
         frameCount++;
-        //postProcPass.uniforms.time.value = frameCount;
-        controls.update();
+        postProcPass.uniforms.time.value = frameCount;
+        //controls.update();
         composer.render();
     }
     requestAnimationFrame(animate);
@@ -580,7 +580,7 @@ function reset(){
         hsv = [Math.pow(fxrand()*.5, 2), fxrandom(0.2, 0.66), fxrandom(0.35, 0.55)]
         backgroundColor = HSVtoRGB(hsv[0], hsv[1], hsv[2])
     }
-    backgroundColor = [0.07,0.11,0.13]
+    backgroundColor = HSVtoRGB(fxrand(), .8, .9);
     
 
     wind = fxrandom(-.4, +.4);
@@ -923,7 +923,7 @@ function loadData(){
     document.body.append(canvas2)
     */
     winScale = canvasWidth / ress;
-    camera = new THREE.OrthographicCamera(-canvasWidth/2/winScale, canvasWidth/2/winScale, canvasHeight/2/winScale, -canvasHeight/2/winScale, 1, 6000);
+    camera = new THREE.OrthographicCamera(-canvasWidth/2, canvasWidth/2, canvasHeight/2, -canvasHeight/2, 1, 6000);
     //camera = new THREE.OrthographicCamera( 1000 * 1. / - 2, 1000 * 1. / 2, 1000 / 2, 1000 / - 2, 1, 4000 );
     //camera = new THREE.PerspectiveCamera( 27, canvasWidth / canvasHeight, 5, 3500 );
     camera.position.z = 1000;
@@ -993,25 +993,29 @@ function loadData(){
     const cparticleSizes = [];
     const cparticleAngles = [];
     const cparticleIndices = [];
-    var amp = ress/36;
+    var amp = ress/2;
     var frq = 0.001;
-    var nn = 2233;
+    var frq2 = map(fxrand(), 0, 1, 0.001, 0.03);
+    var nn = 444;
+    var shift = fxrand();
+    var rang = .1+fxrand()*.9;
     for ( let i = 0; i < nn; i ++ ) {
         //sampler.sample( _position );
         //console.log(_position)
         //_position.applyMatrix4 (sphere.matrix);
         //console.log(_position)
-        var x = amp * (-.5 + power(noise(i*frq, 3131.), 3)) * map(i, 0, 66, 0, 1);
-        var y = amp * (-.5 + power(noise(i*frq, 1131.), 3)) * map(i, 0, 66, 0, 1);
+        var x = amp * (-.5 + power(noise(i*frq, 3131.), 3)) * map(i, 0, nn, 0, 1);
+        var y = amp * (-.5 + power(noise(i*frq, 1131.), 3)) * map(i, 0, nn, 0, 1);
         var z = map(i, 0, nn, 0, 111);
+        x = y = 0;
         var br = map(i, 0, nn, 0, 1);
         var sz = map(i, 0, nn, 0, 1);
         sz = Math.pow(sz, 1./22.);
-        sz = map(sz, 0, 1, 3777, 4);
-        var ss = 1 + 3.*noise(i*0.01);
+        sz = map(sz, 0, 1, 5777, 1);
+        var ss = 1 + 0.*noise(i*0.01);
 
-        var cc1 = HSVtoRGB((i/nn*.1+.33)%1., 0.7, 0.8);
-        var cc2 = HSVtoRGB((i/nn*.1+.03)%1., 0.9, 0.8);
+        var cc1 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), power(noise(i*frq2+.313), 5));
+        var cc2 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), power(noise(i*frq2+.313), 5));
 
         cparticlePositions.push( ss, 0, 0 );
         cparticleAxis.push( x, y, z );
@@ -1039,7 +1043,8 @@ function loadData(){
     
     var pUniforms = {
         'u_time': {'value': 0},
-        'u_winscale': {'value': winScale*window.devicePixelRatio},
+        'u_seed': {'value': fxrand()},
+        'u_winscale': {'value': winScale*(window.devicePixelRatio*0+2.)},
     };
     ptsMat = new THREE.ShaderMaterial( {
         uniforms: pUniforms,
@@ -1056,10 +1061,10 @@ function loadData(){
     if(ff)
         renderer = new THREE.WebGLRenderer({alpha: true, antialias: false});
     //renderer.setPixelRatio( 1.0 );
-    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setPixelRatio( (window.devicePixelRatio*0+2.) );
     renderer.setSize( canvasWidth, canvasHeight );
 
-    controls = new OrbitControls( camera, renderer.domElement );
+    //controls = new OrbitControls( camera, renderer.domElement );
 
     renderer.domElement.id = "cnvs"
     //renderer.domElement.style.position = "absolute";
@@ -1078,13 +1083,13 @@ function loadData(){
 
     composer = new EffectComposer( renderer );
     renderPass = new RenderPass( scene, camera );
-    PostProcShader.uniforms.resolution.value = [canvasWidth*window.devicePixelRatio, canvasHeight*window.devicePixelRatio];
+    PostProcShader.uniforms.resolution.value = [canvasWidth*(window.devicePixelRatio*0+2.), canvasHeight*(window.devicePixelRatio*0+2.)];
     postProcPass = new ShaderPass( PostProcShader );
     composer.addPass(renderPass);
     
     var fxaaPass = new ShaderPass( FXAAShader );
-    fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( canvasWidth*window.devicePixelRatio );
-    fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( canvasHeight*window.devicePixelRatio );
+    fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( canvasWidth*(window.devicePixelRatio*0+2.) );
+    fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( canvasHeight*(window.devicePixelRatio*0+2.) );
     composer.addPass( fxaaPass );
 
     bloomPass = new FilmPass();
@@ -1186,7 +1191,7 @@ function windowResized() {
         camera.bottom = -canvasHeight/2 / winScale;
         camera.updateProjectionMatrix();
 
-        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setPixelRatio( (window.devicePixelRatio*0+2.) );
         //renderer.setPixelRatio( 1.0000 );
         renderer.setSize( canvasWidth, canvasHeight );
     
@@ -1198,7 +1203,7 @@ function windowResized() {
 
         composer = new EffectComposer( renderer );
         renderPass = new RenderPass( scene, camera );
-        PostProcShader.uniforms.resolution.value = [canvasWidth*window.devicePixelRatio, canvasHeight*window.devicePixelRatio];
+        PostProcShader.uniforms.resolution.value = [canvasWidth*(window.devicePixelRatio*0+2.), canvasHeight*(window.devicePixelRatio*0+2.)];
         postProcPass = new ShaderPass( PostProcShader );
         composer.addPass( renderPass );
         composer.addPass( postProcPass );
@@ -1226,8 +1231,8 @@ function onDocumentMouseMove(event) {
     var rx = mx*winScale;
     var ry = my*winScale;
     
-    if(ptsss)
-        ptsss.material.uniforms.u_time.value = ry/55.;
+    //if(ptsss)
+    //    ptsss.material.uniforms.u_time.value = ry/55.;
 }
 
 

@@ -89,7 +89,6 @@ void main() {
     xyrot.y = xyclip.x * sin(vAngle) + xyclip.y * cos(vAngle);
 
 
-
     float ratio = vSize.x/vSize.y;
     float ms = max(vSize.x, vSize.y);
     float mms = min(vSize.x, vSize.y);
@@ -101,16 +100,17 @@ void main() {
     //xyrot.x += f1;
     //xyrot.y += f2;
 
-    float f1 = .2*(-.5 + fbm3(xyrot.xy*1., 0.0+mod(vIndex/100., 1.0)));
-    float f2 = .2*(-.5 + fbm3(xyrot.xy*1., 13.31+mod(vIndex/100., 1.0)));
+    //float f1 = 0.*.2*(-.5 + fbm3(xyrot.xy*1., 0.0+mod(vIndex/100., 1.0)));
+    //float f2 = 0.*.2*(-.5 + fbm3(xyrot.xy*1., 13.31+mod(vIndex/100., 1.0)));
 
-    float dist = length(xyclip + vec2(f1,f2));
-    float alpha = 1. - smoothstep(0.98, 0.99, dist);
-    float rim = 1. - smoothstep(1.-1./vSize.x-.03, 1.-1./vSize.x, dist);
+    //loat dist = length(xyclip + vec2(f1,f2));
+    float dist = length(xyclip);
+    float alpha = 1. - smoothstep(0.28, 0.99, dist);
+    float rim = smoothstep(1.-1./vSize.x-.23, 1.-1./vSize.x, dist);
 
-    vec3 res = vColor.rgb;
+    vec3 res = vColor.rgb * (.6 + .4*vec3(xyclip.xy, 1.));
 
-    res *= rim;
+    res += rim*.9*pow(abs(xyclip.x), 3.);
 
     gl_FragColor = vec4( res, alpha);
 }

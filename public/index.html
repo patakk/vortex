@@ -9,7 +9,7 @@
       let alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
       var fxhash = search.get('fxhash') || "oo" + Array(49).fill(0).map(_=>alphabet[(Math.random()*alphabet.length)|0]).join('')
       //----fxhash = 'oodu17mvuXKo4wVau2NbGowbpiNzkhPWLVNm3tDkxkcMgCyT6A2';
-      //----fxhash = 'oopwHZXMNpGMkKVThf4np4KA7SDJcqt5QPSYcVqKZqqCJeHsX1f';
+      //----fxhash = 'oopwHZXMNpGakKVThf4np4KA7SDJcqt5QPSYqVqKZqqCJeHsX1f';
       let b58dec = str=>[...str].reduce((p,c)=>p*alphabet.length+alphabet.indexOf(c)|0, 0)
       let fxhashTrunc = fxhash.slice(2)
       let regex = new RegExp(".{" + ((fxhash.length/4)|0) + "}", 'g')
