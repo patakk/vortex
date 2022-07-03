@@ -88,7 +88,7 @@ float fbm3 ( in vec2 _st, in float t) {
         _st = rot * _st * 2.0 + shift;
         a *= 0.5;
     }
-    return v*2.-1.;
+    return v;
 }
 
 
@@ -96,11 +96,11 @@ void main() {
     //vAlpha = alpha;
 
     vec3 position2 = position;
-    float ang = 4.*sin(u_time*0.03+index*.01)*index/888. + index*(.01 + .02*randomNoise(vec2(u_seed)));
+    float ang = 4.*sin(u_time*0.03+index*.03)*index/888. + 0.*index*(.01 + .02*randomNoise(vec2(u_seed)));
 
     vec3 axis2 = axis;
-    axis2.x = fbm3(vec2(index,index)*.001+u_seed*3.13, u_seed+0.0+u_time*.01)*u_resolution.x * index/444./2./1.3;
-    axis2.y = fbm3(vec2(index,index)*.001+u_seed*3.13, u_seed+10.0+u_time*.01)*u_resolution.x * index/444./2./1.3;
+    axis2.x = (-1.+2.*fbm3(vec2(index,index)*.002+u_seed*3.13, u_seed+0.0+u_time*.01))*u_resolution.x * index/444./2./1.6;
+    axis2.y = (-1.+2.*fbm3(vec2(index,index)*.002+u_seed*3.13, u_seed+10.0+u_time*.01))*u_resolution.x * index/444./2./1.6;
 
     position2.x = cos(ang)*position.x - sin(ang)*position.y;
     position2.y = sin(ang)*position.x + cos(ang)*position.y;

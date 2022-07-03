@@ -997,7 +997,7 @@ function loadData(){
     var amp = ress/2;
     var frq = 0.0003;
     var frq2 = map(fxrand(), 0, 1, 0.001, 0.03);
-    var nn = 33;
+    var nn = map(fxrand(), 0, 1, 33, 233);
     var shift = fxrand();
     var rang = .1+fxrand()*.9;
     for ( let i = 0; i < nn; i ++ ) {
@@ -1015,8 +1015,8 @@ function loadData(){
         sz = map(sz, 0, 1, 5777, 1);
         var ss = 1 + 2.*power(noise(i*0.01), 2);
 
-        var cc1 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), power(noise(i*frq2+.313), 5));
-        var cc2 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), power(noise(i*frq2+.313), 5));
+        var cc1 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), .2+power(noise(i*frq2+.313), 5));
+        var cc2 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), .2+power(noise(i*frq2+.313), 5));
 
         cparticlePositions.push( ss, 0, 0 );
         cparticleAxis.push( x, y, z );

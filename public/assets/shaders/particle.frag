@@ -114,7 +114,7 @@ void main() {
     res.x += .04*sin(u_time*.1 + vIndex*.01);
     res.y += .04*sin(u_time*.13 + vIndex*.01);
 
-    res += rim*.9*pow(abs(xyclip.x), 3.);
+    res += 0.*rim*.9*pow(abs(xyclip.x), 3.);
 
     gl_FragColor = vec4( res, alpha);
 }

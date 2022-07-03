@@ -3,6 +3,7 @@ varying vec4 vColor;
 varying vec2 vSize;
 varying float vAngle;
 varying float vIndex;
+uniform float u_time;
 
 
 float randomNoise(vec2 p) {
@@ -109,6 +110,9 @@ void main() {
     float rim = smoothstep(1.-1./vSize.x-.23, 1.-1./vSize.x, dist);
 
     vec3 res = vColor.rgb * (.6 + .4*vec3(xyclip.xy, 1.));
+
+    res.x += .04*sin(u_time*.1 + vIndex*.01);
+    res.y += .04*sin(u_time*.13 + vIndex*.01);
 
     res += rim*.9*pow(abs(xyclip.x), 3.);
 
