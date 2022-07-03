@@ -512,6 +512,7 @@ function animate(time) {
         //scene.rotateX(.0041);
         ptsss.material.uniforms.u_time.value = frameCount;
         ptsss.material.uniforms.u_winscale.value = winScale*(window.devicePixelRatio*0+2.);
+        ptsss.material.uniforms.u_resolution.value = [canvasWidth, canvasHeight];
         frameCount++;
         postProcPass.uniforms.time.value = frameCount;
         //controls.update();
@@ -593,15 +594,15 @@ function reset(){
     var ww = window.innerWidth || canvas.clientWidth || body.clientWidth;
     var wh = window.innerHeight|| canvas.clientHeight|| body.clientHeight;
 
-    baseWidth = ress-33;
-    baseHeight = ress-33;
+    baseWidth = ress-0;
+    baseHeight = ress-0;
 
     winScale = ww / baseWidth;
 
     if(ww < ress+16 || wh < ress+16 || true){
         var mm = min(ww, wh);
-        canvasWidth = mm-10*mm/ress;
-        canvasHeight = mm-10*mm/ress;
+        canvasWidth = mm-0*mm/ress;
+        canvasHeight = mm-0*mm/ress;
         //baseWidth = mm-16-16;
         //baseHeight = mm-16-16;
     }
@@ -994,9 +995,9 @@ function loadData(){
     const cparticleAngles = [];
     const cparticleIndices = [];
     var amp = ress/2;
-    var frq = 0.001;
+    var frq = 0.0003;
     var frq2 = map(fxrand(), 0, 1, 0.001, 0.03);
-    var nn = 444;
+    var nn = 33;
     var shift = fxrand();
     var rang = .1+fxrand()*.9;
     for ( let i = 0; i < nn; i ++ ) {
@@ -1012,7 +1013,7 @@ function loadData(){
         var sz = map(i, 0, nn, 0, 1);
         sz = Math.pow(sz, 1./22.);
         sz = map(sz, 0, 1, 5777, 1);
-        var ss = 1 + 0.*noise(i*0.01);
+        var ss = 1 + 2.*power(noise(i*0.01), 2);
 
         var cc1 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), power(noise(i*frq2+.313), 5));
         var cc2 = HSVtoRGB(power(noise(i*frq2)*rang+shift, 2), power(noise(i*frq2+5.3313), 5), power(noise(i*frq2+.313), 5));
@@ -1044,6 +1045,7 @@ function loadData(){
     var pUniforms = {
         'u_time': {'value': 0},
         'u_seed': {'value': fxrand()},
+        'u_resolution': {'value': [canvasWidth, canvasHeight]},
         'u_winscale': {'value': winScale*(window.devicePixelRatio*0+2.)},
     };
     ptsMat = new THREE.ShaderMaterial( {
@@ -1170,8 +1172,8 @@ function windowResized() {
         var ww = window.innerWidth || canvas.clientWidth || body.clientWidth;
         var wh = window.innerHeight|| canvas.clientHeight|| body.clientHeight;
 
-        baseWidth = ress-33;
-        baseHeight = ress-33;
+        baseWidth = ress-0;
+        baseHeight = ress-0;
 
         canvasWidth = ress;
         canvasHeight = ress;
